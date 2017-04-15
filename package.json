@@ -6,8 +6,14 @@
   "repository": "https://github.com/VuexLtd/preact-mobx",
   "author": "James Birtles <james.birtles@vuex.io>",
   "license": "MIT",
+  "scripts": {
+    "build": "tsc"
+  },
   "dependencies": {
     "mobx": "^3.0.0",
     "preact": "^8.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^2.2.2"
   }
 }

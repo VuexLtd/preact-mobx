@@ -8,10 +8,10 @@ export type Ctor<T> = {
 
 function augment<T, K extends keyof T>(object: T, key: K, func: T[K]) {
     const origMethod = object[key];
-    object[key] = function (...args: any[]): any {
-        (func as any).call(this, ...args);
+    object[key] = function () {
+        (func as any).apply(this, arguments);
         if (origMethod) {
-            (origMethod as any).call(this, ...args);
+            (origMethod as any).apply(this, arguments);
         }
     } as any;
 }
@@ -30,10 +30,12 @@ export function observer(componentClass: Ctor<ComponentLifecycle<any, any> & Com
     })
 
     const origRender = componentClass.prototype.render;
-    componentClass.prototype.render = function (this: Component<any, any>, ...args: any[]): any {
+    componentClass.prototype.render = function (this: Component<any, any>): any {
+        const args = arguments;
+
         let renderResult: any;
         this[mobxReaction].track(() => {
-            renderResult = origRender.call(this, ...args);
+            renderResult = origRender.apply(this, args);
         });
 
         return renderResult;
