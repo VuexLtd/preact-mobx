@@ -1,11 +1,6 @@
 import { Component } from 'preact';
 import { Reaction } from 'mobx';
 
-export type Ctor<T> = {
-    prototype: T;
-    new (): T;
-};
-
 function augment(object: object, key: string, func: Function) {
     const origMethod = object[key];
     object[key] = function() {
@@ -18,10 +13,10 @@ function augment(object: object, key: string, func: Function) {
 
 const mobxReaction = Symbol('mobxReaction');
 
-export function observer<T extends Component<any, any>>(
-    componentClass: Ctor<T>,
-) {
-    augment(componentClass.prototype, 'componentWillMount', function(this: T) {
+export function observer(componentClass: typeof Component) {
+    augment(componentClass.prototype, 'componentWillMount', function(
+        this: Component<any, any>,
+    ) {
         const compName =
             (this.constructor as typeof Component).displayName ||
             this.constructor.name;
@@ -31,14 +26,14 @@ export function observer<T extends Component<any, any>>(
     });
 
     augment(componentClass.prototype, 'componentWillUnmount', function(
-        this: T,
+        this: Component<any, any>,
     ) {
         this[mobxReaction].dispose();
         this[mobxReaction] = null;
     });
 
     const origRender = componentClass.prototype.render;
-    componentClass.prototype.render = function(this: T): any {
+    componentClass.prototype.render = function(this: Component<any, any>): any {
         const args = arguments;
 
         let renderResult: any;
