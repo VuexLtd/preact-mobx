@@ -1,36 +1,44 @@
-import { h, Component, ComponentLifecycle } from 'preact';
-import { Reaction, observable, action, useStrict } from 'mobx';
+import { Component } from 'preact';
+import { Reaction } from 'mobx';
 
 export type Ctor<T> = {
     prototype: T;
-    new(): T;
-}
+    new (): T;
+};
 
-function augment<T, K extends keyof T>(object: T, key: K, func: T[K]) {
+function augment(object: object, key: string, func: Function) {
     const origMethod = object[key];
-    object[key] = function () {
+    object[key] = function() {
         (func as any).apply(this, arguments);
         if (origMethod) {
-            (origMethod as any).apply(this, arguments);
+            return (origMethod as any).apply(this, arguments);
         }
     } as any;
 }
 
 const mobxReaction = Symbol('mobxReaction');
 
-export function observer(componentClass: Ctor<ComponentLifecycle<any, any> & Component<any, any>>) {
-    augment(componentClass.prototype, 'componentWillMount', function(this: Component<any, any>) {
-        const compName = (this.constructor as typeof Component).displayName || this.constructor.name;
-        this[mobxReaction] = new Reaction(`${compName}.render()`, () => this.forceUpdate());
+export function observer<T extends Component<any, any>>(
+    componentClass: Ctor<T>,
+) {
+    augment(componentClass.prototype, 'componentWillMount', function(this: T) {
+        const compName =
+            (this.constructor as typeof Component).displayName ||
+            this.constructor.name;
+        this[mobxReaction] = new Reaction(`${compName}.render()`, () =>
+            this.forceUpdate(),
+        );
     });
 
-    augment(componentClass.prototype, 'componentWillUnmount', function (this: Component<any, any>) {
+    augment(componentClass.prototype, 'componentWillUnmount', function(
+        this: T,
+    ) {
         this[mobxReaction].dispose();
         this[mobxReaction] = null;
-    })
+    });
 
     const origRender = componentClass.prototype.render;
-    componentClass.prototype.render = function (this: Component<any, any>): any {
+    componentClass.prototype.render = function(this: T): any {
         const args = arguments;
 
         let renderResult: any;
@@ -39,5 +47,5 @@ export function observer(componentClass: Ctor<ComponentLifecycle<any, any> & Com
         });
 
         return renderResult;
-    }
+    };
 }
