@@ -1,20 +1,23 @@
 {
-  "name": "preact-mobx",
-  "version": "0.1.3",
-  "description": "Simple observer decorator for using Preact components with MobX",
-  "main": "dist/index.js",
-  "typings": "dist/index",
-  "repository": "https://github.com/VuexLtd/preact-mobx",
-  "author": "James Birtles <james.birtles@vuex.io>",
-  "license": "MIT",
-  "scripts": {
-    "build": "tsc"
-  },
-  "peerDependencies": {
-    "mobx": "^3.0.0",
-    "preact": "^8.0.0"
-  },
-  "devDependencies": {
-    "typescript": "^2.2.2"
-  }
+    "name": "preact-mobx",
+    "version": "0.1.3",
+    "description": "Simple observer decorator for using Preact components with MobX",
+    "main": "dist/index.js",
+    "typings": "dist/index",
+    "repository": "https://github.com/VuexLtd/preact-mobx",
+    "author": "James Birtles <james.birtles@vuex.io>",
+    "license": "MIT",
+    "scripts": {
+        "build": "tsc",
+        "prepublishOnly": "npm run build"
+    },
+    "peerDependencies": {
+        "mobx": "^3.0.0",
+        "preact": "^8.0.0"
+    },
+    "devDependencies": {
+        "typescript": "^2.2.2",
+        "mobx": "^3.0.0",
+        "preact": "^8.0.0"
+    }
 }
