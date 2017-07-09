@@ -13,7 +13,9 @@ function augment(object: object, key: string, func: Function) {
 
 const mobxReaction = Symbol('mobxReaction');
 
-export function observer(componentClass: typeof Component) {
+export function observer(comp: any) {
+    const componentClass = <typeof Component>comp;
+
     augment(componentClass.prototype, 'componentWillMount', function(
         this: Component<any, any>,
     ) {
